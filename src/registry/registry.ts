@@ -18,9 +18,24 @@ export async function launchRegistry() {
   _registry.use(express.json());
   _registry.use(bodyParser.json());
 
+  // Stockage des noeuds
+  const nodes: Node[] = [];
+
   // Implémentation de la route /status
   _registry.get("/status", (req: Request, res: Response) => {
     res.send("live");
+  });
+
+  // Route pour enregistrer un noeud
+  _registry.post("/registerNode", (req: Request, res: Response) => {
+    const { nodeId, pubKey }: RegisterNodeBody = req.body;
+    nodes.push({ nodeId, pubKey });
+    res.send("success");
+  });
+
+  // Route pour récupérer tous les noeuds
+  _registry.get("/getNodeRegistry", (req: Request, res: Response) => {
+    res.json({ nodes });
   });
 
   const server = _registry.listen(REGISTRY_PORT, () => {
